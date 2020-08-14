@@ -27,6 +27,7 @@ export default class Intro {
     this.id = ++cid
     this.elm = Intro.prototype.introDom
     this.insertTarget = insertTarget
+    this.currentStep = null
     this.stepItems = []
   }
 
@@ -41,16 +42,35 @@ export default class Intro {
   }
 
   step = (num) => {
+    this.resetStepsStatus()
     const stepItem = this.stepItems.find(item => item.step === num)
     if (stepItem) {
-      const { el } = stepItem
-      this._changeIntroPosition(el)
+      this.currentStep = stepItem
+      this.showStep()
+      this._changeIntroPosition()
     }
   }
 
-  _changeIntroPosition = (el) => {
+  resetStepsStatus () {
+    // reset show status of current step
+    const currentShowStep = document.body.querySelector('[data-intro].vintro-show')
+    if (!currentShowStep) return false
+    console.log(currentShowStep.className)
+    const className = currentShowStep.className.replace(/\s?vintro-show\s?/, '')
+    console.log(className)
+    currentShowStep.className = className
+  }
+
+  showStep () {
+    const { el } = this.currentStep
+    // add 'vintro-show' class to adjustment 'z-index' of the step target elemet
+    el.className += ' vintro-show'
+  }
+
+  _changeIntroPosition = () => {
+    const { el, step } = this.currentStep
     const position = el.getBoundingClientRect()
-    this.elm.move(position, el)
+    this.elm.move(position, el, step)
   }
 
   close = () => {

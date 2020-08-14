@@ -1,29 +1,36 @@
 <template lang="pug">
-  .c-intro(:style="wrapperStyle")
-    .overlay
-    .intro-helper(:style="helperStyle")
-    .intro-tootip(:style="helperStyle")
-
+  transition(name="fade")
+    .c-vintro(v-show="isShow")
+      .vintro-overlay(v-click-out="hide")
+      .vintro-helper(:style="helperStyle")
+      .vintro-tootip-layer(:style="helperStyle")
+        i.vintro-step {{step}}
+        .vintro-tootip
+          .vintro-tootip-text 'step 1'
+          .vintro-tootip-bullets
+          .vintro-tootip-arrow
+          .vintro-tootip-buttons
+            button.vintro-tootip-button Skip
 </template>
 
 <script>
+import clickOut from '../../directive/clickOut'
+
 export default {
   name: 'CIntro',
   data () {
     return {
-      wrapperStyle: 'display:none;',
-      helperStyle: {
-        position: 'absolute',
-        backgroundColor: '#fff',
-        opacity: '0.8'
-      },
-      tootipStyle: {
-        position: 'absolute'
-      }
+      isShow: false,
+      helperStyle: {},
+      tootipStyle: {},
+      step: 1
     }
   },
+  directives: {
+    clickOut: clickOut
+  },
   methods: {
-    move (position, targetElm) {
+    move (position, targetElm, step) {
       const {
         // bottom,
         left,
@@ -32,33 +39,34 @@ export default {
         width,
         height
       } = position
-      this.helperStyle = Object.assign(this.helperStyle, {
+      this.step = step
+      const helperStyle = Object.assign(this.helperStyle, {
         top: top + 'px',
         left: left + 'px',
         width: width + 'px',
         height: height + 'px'
-        // right: right + 'px',
-        // bottom: bottom + 'px'
       })
+      this.helperStyle = helperStyle
+      const tootipStyle = Object.assign(this.tootipStyle, {
+        top: top + 'px',
+        left: left + 'px',
+        width: width + 'px',
+        height: height + 'px'
+      })
+      this.tootipStyle = tootipStyle
+      console.log('targetElm')
+      console.log(targetElm)
     },
     show () {
-      this.wrapperStyle = 'display:block;'
+      this.isShow = true
     },
     hide () {
-      this.wrapperStyle = 'display:none;'
+      this.isShow = false
     }
   }
 }
 </script>
 
-<style scoped lang="stylus">
-  .c-intro
-    .overlay
-      position absolute
-      left 0
-      right 0
-      top 0
-      bottom 0
-      background-color #000
-      opacity 0.8
+<style lang="stylus">
+  @import "index.styl"
 </style>
