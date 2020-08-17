@@ -7,5 +7,9 @@ export default function create (Component, props) {
   })
   comp.$mount()
   document.body.appendChild(comp.$el)
+  comp.remove = function () {
+    document.body.removeChild(comp.$el)
+    comp.$destroy()
+  }
   return comp
 }

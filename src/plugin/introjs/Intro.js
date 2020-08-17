@@ -25,10 +25,13 @@ export default class Intro {
   constructor (insertTarget, options) {
     this.options = options
     this.id = ++cid
-    this.elm = Intro.prototype.introDom
-    this.insertTarget = insertTarget
-    this.currentStep = null
-    this.stepItems = []
+    this.elm = null // intro dom
+    this.introComp = null // intro dom component instance
+    this.insertTarget = insertTarget // the parent dom for to insert intro dom
+    this.currentStep = null // current step
+    this.currentTarget = null // current step target element
+    this.stepItems = [] // step collections
+    this.introCreate()
   }
 
   init = () => {
@@ -37,7 +40,7 @@ export default class Intro {
   }
 
   start = () => {
-    this.elm.show()
+    this.introComp.show()
     this.step(1)
   }
 
@@ -47,7 +50,7 @@ export default class Intro {
     if (stepItem) {
       this.currentStep = stepItem
       this.showStep()
-      this._changeIntroPosition()
+      this.changeIntroPosition()
     }
   }
 
@@ -55,9 +58,7 @@ export default class Intro {
     // reset show status of current step
     const currentShowStep = document.body.querySelector('[data-intro].vintro-show')
     if (!currentShowStep) return false
-    console.log(currentShowStep.className)
     const className = currentShowStep.className.replace(/\s?vintro-show\s?/, '')
-    console.log(className)
     currentShowStep.className = className
   }
 
@@ -67,14 +68,14 @@ export default class Intro {
     el.className += ' vintro-show'
   }
 
-  _changeIntroPosition = () => {
+  // set position of the intro dom according the current step dom
+  changeIntroPosition = () => {
     const { el, step } = this.currentStep
-    const position = el.getBoundingClientRect()
-    this.elm.move(position, el, step)
+    this.introComp.move(el, step, this)
   }
 
   close = () => {
-    this.elm.hide()
+    this.introComp.hide()
   }
 
   addStep = (step) => {
@@ -88,6 +89,12 @@ export default class Intro {
   }
 
   create = (...args) => new Intro(...args)
+  introCreate = () => {
+    const comp = introCreate(this.options, this.insertTarget)
+    this.elm = comp.$el
+    this.introComp = comp
+    return comp
+  }
 
   clear () {
     let index
@@ -112,6 +119,5 @@ Intro.install = function (_Vue, options) {
     }
     return new Intro(insertTarget, options)
   }
-  Intro.prototype.introDom = introCreate(options)
   Vue.directive('intro', DIRECTIVES.intro)
 }

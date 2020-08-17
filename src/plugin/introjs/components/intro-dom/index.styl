@@ -4,7 +4,7 @@
 
 .c-vintro
   .vintro-overlay
-    position absolute
+    position fixed
     z-index 999997
     left 0
     right 0
@@ -21,7 +21,7 @@
 
   .vintro-tootip-layer
     position absolute
-    z-index 999998
+    z-index 999999
 
     .vintro-step
       display: inline-block
@@ -44,16 +44,20 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, .4)
 
     .vintro-tootip
-      box-sizing: content-box
       position: absolute
+      bottom 0
+      left 0
+      transform: translateY(calc(100% + 15px))
       visibility: visible
       padding: 10px
-      background-color: white
       min-width: 200px
       max-width: 300px
-      border-radius: 3px
-      box-shadow: 0 1px 10px rgba(0,0,0,.4)
       transition: opacity .1s ease-out
+      border-radius: 3px
+      box-shadow: 0 1px 10px rgba(0, 0, 0, .4)
+      background-color: white
+      box-sizing: content-box
+
       .vintro-tootip-buttons
         .vintro-tootip-button
           box-sizing: content-box
@@ -66,20 +70,22 @@
           margin: 0
           text-decoration: none
           text-shadow: 1px 1px 0 #fff
-          font: 11px/normal sans-serif
+          font: 11px / normal sans-serif
           color: #333
           white-space: nowrap
           cursor: pointer
           outline: 0
           background-color: #ececec
-          background-image: -webkit-gradient(linear,0 0,0 100%,from(#f4f4f4),to(#ececec))
-          background-image: -moz-linear-gradient(#f4f4f4,#ececec)
-          background-image: -o-linear-gradient(#f4f4f4,#ececec)
-          background-image: linear-gradient(#f4f4f4,#ececec)
+          background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f4f4f4), to(#ececec))
+          background-image: -moz-linear-gradient(#f4f4f4, #ececec)
+          background-image: -o-linear-gradient(#f4f4f4, #ececec)
+          background-image: linear-gradient(#f4f4f4, #ececec)
+
       .vintro-tootip-arrow
         border: 5px solid white
         content: ''
         position: absolute
+
         &.top
           top: -10px
           border-top-color: transparent
