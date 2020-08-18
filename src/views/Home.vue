@@ -2,7 +2,7 @@
   <div class="home" ref="introWrapper">
     <img alt="Vue logo" src="../assets/logo.png">
     <button @click="start">start</button>
-    <HelloWorld msg="Welcome to Your Vue.js App" v-intro="'step 1'"/>
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
@@ -13,11 +13,11 @@ import HelloWorld from '@/components/HelloWorld.vue'
 export default {
   name: 'Home',
   created () {
-    this.introInstance = this.$intro(this.$refs.introWrapper)
+    // this.introInstance = this.$intro(this.$refs.introWrapper)
   },
   methods: {
     start () {
-      this.introInstance.start()
+      // this.introInstance.start()
     }
   },
   components: {

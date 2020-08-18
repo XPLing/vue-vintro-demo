@@ -6,24 +6,25 @@ let Vue = null
 let cid = 0
 const INSTANCE = []
 
-function formatterStepFromDirective (stepData, stepItems) {
-  const { el, value } = stepData
-  const options = value.split(',')
-  let step = options[0]
-  if (step) {
-    step = step.match(/^step\s(\d*)$/)
-    step = step && step[1]
-  }
-  step = ~~step || stepItems.length + 1
-  return {
-    el,
-    step
-  }
-}
+// TODO to remove
+// function formatterStepFromDirective (stepData, stepItems) {
+//   const { el, value } = stepData
+//   const options = value.split(',')
+//   let step = options[0]
+//   if (step) {
+//     step = step.match(/^step\s(\d*)$/)
+//     step = step && step[1]
+//   }
+//   step = ~~step || stepItems.length + 1
+//   return {
+//     el,
+//     step
+//   }
+// }
 
 export default class Intro {
   constructor (insertTarget, options) {
-    this.options = options
+    this.options = Object.assign({}, new.target._OPTIONS, options)
     this.id = ++cid
     this.elm = null // intro dom
     this.introComp = null // intro dom component instance
@@ -54,6 +55,18 @@ export default class Intro {
     }
   }
 
+  nextStep () {
+    const length = this.stepItems.length
+    if (this.currentStep >= length) throw new TypeError(`No found next step, max step is ${this.currentStep}.`)
+    this.step(this.currentStep + 1)
+  }
+
+  prevStep () {
+    const length = this.stepItems.length
+    if (this.currentStep >= length) throw new TypeError(`No found previous step, min step is ${this.currentStep}.`)
+    this.step(this.currentStep - 1)
+  }
+
   resetStepsStatus () {
     // reset show status of current step
     const currentShowStep = document.body.querySelector('[data-intro].vintro-show')
@@ -79,7 +92,6 @@ export default class Intro {
   }
 
   addStep = (step) => {
-    step = formatterStepFromDirective(step)
     console.log('step')
     console.log(step)
     this.stepItems.push(step)
@@ -109,7 +121,14 @@ export default class Intro {
     }
   }
 }
-
+Intro._OPTIONS = {
+  /* Next button label in tooltip box */
+  nextLabel: 'Next &rarr;',
+  /* Previous button label in tooltip box */
+  prevLabel: '&larr; Back',
+  /* Skip button label in tooltip box */
+  skipLabel: 'Skip'
+}
 Intro.install = function (_Vue, options) {
   options = Object.assign({}, DEFAULT_OPTIONS, options)
   Vue = _Vue

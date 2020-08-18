@@ -6,70 +6,79 @@
       .vintro-tootip-layer(:style="helperStyle")
         i.vintro-step {{step}}
         .vintro-tootip
-          .vintro-tootip-text 'step 1'
+          .vintro-tootip-text {{`Step ${step}`}}
           .vintro-tootip-bullets
           .vintro-tootip-arrow.top
           .vintro-tootip-buttons
-            button.vintro-tootip-button Skip
+            button.vintro-tootip-button(v-html="skipLabel" @click="handleSkip")
+            button.vintro-tootip-button(v-if="step>stepCount" v-html="prevLabel")
+            button.vintro-tootip-button(v-if="step<stepCount" v-html="nextLabel")
 </template>
 
 <script>
 import clickOut from '../../directive/clickOut'
+import { onElResize } from '../../util/onElResize'
 
 export default {
   name: 'CIntro',
+  props: {
+    nextLabel: {
+      type: String,
+      default: ''
+    },
+    prevLabel: {
+      type: String,
+      default: ''
+    },
+    skipLabel: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       isShow: false,
       helperStyle: {},
       tootipStyle: {},
       step: 1,
+      stepCount: 0,
       currentTarget: null
     }
   },
   created () {
-    this.MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
-    this.recordTragetOldValue = {}
   },
   directives: {
     clickOut: clickOut
   },
+  beforeDestroy () {
+    this.introInstance = null
+  },
   methods: {
     move (targetElm, step, introInstance) {
       // remove resize listener on previous step element
-      if (this.oldTarget) this.removeResizeListener(this.oldTarget)
+      this.clearElResize()
       // add resize listener on current step element
       // to avoid appear scrollbar cause to inaccurate width calculation of the target element
-      this.addResizeListener(targetElm)
+      this.removeElResize = onElResize(targetElm, this.resize)
       this.step = step
       this.currentTarget = targetElm
       console.log('move')
       this.setPosition()
       this.oldTarget = targetElm
-      if (!this.introInstance) this.introInstance = introInstance
-    },
-    addResizeListener (targetElm) {
-      console.log(targetElm)
-      this.resizeHandle = this.resize
-      this.observer = new MutationObserver((mutations) => {
-        const width = getComputedStyle(targetElm).getPropertyValue('width')
-        const height = getComputedStyle(targetElm).getPropertyValue('height')
-        console.log('mutations')
-        console.log(mutations)
-        if (width === this.recordTragetOldValue.width && height === this.recordTragetOldValue.height) return
-        this.recordTragetOldValue = {
-          width,
-          height
-        }
-        this.resizeHandle()
-      })
-      this.observer.observe(targetElm, { attributes: true, childList: true, subtree: true })
-      // targetElm.addEventListener('resize', this.resizeHandle)
+      if (!this.introInstance) {
+        this.introInstance = introInstance
+        this.stepCount = introInstance.stepItems.length
+      }
     },
     resize (e) {
       console.log('resize cont')
-      console.log(e.target)
       this.setPosition()
+    },
+    clearElResize () {
+      if (this.removeElResize) {
+        this.removeElResize()
+        this.removeElResize = null
+      }
     },
     setPosition () {
       if (!(this.isShow && this.currentTarget)) return false
@@ -95,22 +104,15 @@ export default {
       })
       this.tootipStyle = tootipStyle
     },
-    removeResizeListener (targetElm) {
-      // targetElm.removeEventListener('resize', this.resizeHandle)
-      this.observer.disconnect()
-      this.observer.takeRecords()
-      this.observer = null
-    },
     show () {
       this.isShow = true
-      // this.addResizeListener(document.body)
     },
     hide () {
       this.isShow = false
-      this.removeResizeListener(this.oldTarget)
-      this.removeResizeListener(this.currentTarget)
-      // this.removeResizeListener(document.body)
-      this.oldTarget = null
+      this.clearElResize()
+    },
+    handleSkip () {
+      this.hide()
     }
   }
 }

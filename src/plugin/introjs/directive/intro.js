@@ -1,12 +1,16 @@
 export default {
   bind (el, binding, vnode) {
     el.dataset.intro = binding.value
-    console.log('intro')
-    console.log(vnode)
-    const { context: { introInstance } } = vnode
-    introInstance.addStep({
+    const { context } = vnode
+    const step = {
       el,
-      value: binding.value
-    })
+      ...binding.value
+    }
+    if (context.introInstance) {
+      context.introInstance.addStep(step)
+    } else {
+      context.__introSteps = context.__introSteps || []
+      context.__introSteps.push(step)
+    }
   }
 }

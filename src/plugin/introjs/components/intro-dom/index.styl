@@ -45,13 +45,14 @@
 
     .vintro-tootip
       position: absolute
-      bottom 0
+      bottom -10px
       left 0
-      transform: translateY(calc(100% + 15px))
-      visibility: visible
       padding: 10px
+      margin-bottom 15px
       min-width: 200px
       max-width: 300px
+      visibility: visible
+      transform: translateY(calc(100% + 15px))
       transition: opacity .1s ease-out
       border-radius: 3px
       box-shadow: 0 1px 10px rgba(0, 0, 0, .4)
@@ -59,6 +60,9 @@
       box-sizing: content-box
 
       .vintro-tootip-buttons
+        text-align right
+        margin-top 10px
+
         .vintro-tootip-button
           box-sizing: content-box
           position: relative
@@ -80,6 +84,10 @@
           background-image: -moz-linear-gradient(#f4f4f4, #ececec)
           background-image: -o-linear-gradient(#f4f4f4, #ececec)
           background-image: linear-gradient(#f4f4f4, #ececec)
+
+          & + .vintro-tootip-button {
+            margin-left 6px
+          }
 
       .vintro-tootip-arrow
         border: 5px solid white
