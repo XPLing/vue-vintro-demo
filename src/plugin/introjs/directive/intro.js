@@ -6,11 +6,6 @@ export default {
       el,
       ...binding.value
     }
-    if (context.introInstance) {
-      context.introInstance.addStep(step)
-    } else {
-      context.__introSteps = context.__introSteps || []
-      context.__introSteps.push(step)
-    }
+    context.$introHub.$emit('add', step)
   }
 }

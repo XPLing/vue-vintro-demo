@@ -10,6 +10,7 @@ export default {
     el.addEventListener('click', el.clickCb)
   },
   unbind (el, binding, vnode) {
-    el.removeListener('click', el.clickCb)
+    el.removeEventListener('click', el.clickCb)
+    delete el.clickCb
   }
 }

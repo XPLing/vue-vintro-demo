@@ -1,13 +1,13 @@
 <template>
   <div class="hello">
-    <h1 v-intro="{intro:'Step 1, welcome', step: 1}">{{ msg }}</h1>
-    <p v-intro="{intro:'Step 2, vue-cli', step: 2}">
+    <h1 v-intro="{intro:'Step 2, welcome', step: 2}">{{ msg }}</h1>
+    <p v-intro="{intro:'Step 3, vue-cli', step: 3}">
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
     <h3>Installed CLI Plugins</h3>
-    <ul>
+    <ul v-intro="{intro:'Step 4, vue-cli', step: 4}">
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank"
              rel="noopener">babel</a></li>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank"

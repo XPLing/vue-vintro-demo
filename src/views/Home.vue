@@ -1,6 +1,6 @@
 <template>
-  <div class="home" ref="introWrapper">
-    <img alt="Vue logo" src="../assets/logo.png">
+  <div class="home" ref="introWrapper" v-intro-scope>
+    <img alt="Vue logo" src="../assets/logo.png" v-intro="{step:1, intro:'Step 1, Start'}">
     <button @click="start">start</button>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
@@ -12,12 +12,14 @@ import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
-  created () {
-    // this.introInstance = this.$intro(this.$refs.introWrapper)
+  mounted () {
+    this.introInstance = this.$intro({
+      introTargetComp: this
+    })
   },
   methods: {
     start () {
-      // this.introInstance.start()
+      this.introInstance.start()
     }
   },
   components: {

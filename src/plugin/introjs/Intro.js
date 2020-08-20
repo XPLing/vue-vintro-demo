@@ -1,11 +1,12 @@
 import introCreate from './dom'
+import hub from './util/hub'
 import { DEFAULT_OPTIONS } from './conf'
 import DIRECTIVES from './directive'
+import mixin from './mixin'
 
 let Vue = null
 let cid = 0
 const INSTANCE = []
-
 // TODO to remove
 // function formatterStepFromDirective (stepData, stepItems) {
 //   const { el, value } = stepData
@@ -30,7 +31,6 @@ export default class Intro {
     this.introComp = null // intro dom component instance
     this.insertTarget = insertTarget // the parent dom for to insert intro dom
     this.currentStep = null // current step
-    this.currentTarget = null // current step target element
     this.stepItems = [] // step collections
     this.introCreate()
   }
@@ -57,14 +57,13 @@ export default class Intro {
 
   nextStep () {
     const length = this.stepItems.length
-    if (this.currentStep >= length) throw new TypeError(`No found next step, max step is ${this.currentStep}.`)
-    this.step(this.currentStep + 1)
+    if (this.currentStep.step >= length) throw new TypeError(`No found next step, max step is ${this.currentStep.step}.`)
+    this.step(this.currentStep.step + 1)
   }
 
   prevStep () {
-    const length = this.stepItems.length
-    if (this.currentStep >= length) throw new TypeError(`No found previous step, min step is ${this.currentStep}.`)
-    this.step(this.currentStep - 1)
+    if (this.currentStep.step < 1) throw new TypeError('No found previous step, min step is 1.')
+    this.step(this.currentStep.step - 1)
   }
 
   resetStepsStatus () {
@@ -91,9 +90,16 @@ export default class Intro {
     this.introComp.hide()
   }
 
+  initSteps = () => {
+    const { __introSteps } = this.options.introTargetComp
+    if (__introSteps) {
+      __introSteps.forEach(step => {
+        this.addStep(step)
+      })
+    }
+  }
+
   addStep = (step) => {
-    console.log('step')
-    console.log(step)
     this.stepItems.push(step)
     this.stepItems.sort(function (a, b) {
       return a.step - b.step
@@ -102,21 +108,28 @@ export default class Intro {
 
   create = (...args) => new Intro(...args)
   introCreate = () => {
+    this.init()
     const comp = introCreate(this.options, this.insertTarget)
     this.elm = comp.$el
     this.introComp = comp
+    if (this.options.introTargetComp) {
+      this.initSteps()
+    }
     return comp
   }
 
   clear () {
     let index
-    const instance = INSTANCE.find((item, idx) => {
+    let instance = INSTANCE.find((item, idx) => {
       if (item.id === this.id) {
         index = idx
         return item
       }
     })
+    this.introComp && this.introComp.remove()
+    this.introComp = null
     if (instance) {
+      instance = null
       INSTANCE.splice(index, 1)
     }
   }
@@ -127,16 +140,25 @@ Intro._OPTIONS = {
   /* Previous button label in tooltip box */
   prevLabel: '&larr; Back',
   /* Skip button label in tooltip box */
-  skipLabel: 'Skip'
+  skipLabel: 'Skip',
+  /* Intro target Component */
+  introTargetComp: null
 }
 Intro.install = function (_Vue, options) {
   options = Object.assign({}, DEFAULT_OPTIONS, options)
   Vue = _Vue
   Vue.prototype.$intro = (insertTarget, options) => {
     if (!(insertTarget instanceof HTMLElement)) {
+      if (Object.prototype.toString.call(insertTarget) === '[object Object]') {
+        options = insertTarget
+      }
       insertTarget = document.body
     }
     return new Intro(insertTarget, options)
   }
+  const HubComp = Vue.extend(hub)
+  Vue.prototype.$introHub = new HubComp()
   Vue.directive('intro', DIRECTIVES.intro)
+  Vue.directive('intro-scope', DIRECTIVES.scope)
+  Vue.mixin(mixin)
 }

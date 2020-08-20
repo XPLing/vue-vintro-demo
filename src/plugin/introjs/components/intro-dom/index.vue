@@ -11,8 +11,8 @@
           .vintro-tootip-arrow.top
           .vintro-tootip-buttons
             button.vintro-tootip-button(v-html="skipLabel" @click="handleSkip")
-            button.vintro-tootip-button(v-if="step>stepCount" v-html="prevLabel")
-            button.vintro-tootip-button(v-if="step<stepCount" v-html="nextLabel")
+            button.vintro-tootip-button(v-if="step>1" v-html="prevLabel" @click="handlePrev")
+            button.vintro-tootip-button(v-if="step<stepCount" v-html="nextLabel" @click="handleNext")
 </template>
 
 <script>
@@ -62,7 +62,6 @@ export default {
       this.removeElResize = onElResize(targetElm, this.resize)
       this.step = step
       this.currentTarget = targetElm
-      console.log('move')
       this.setPosition()
       this.oldTarget = targetElm
       if (!this.introInstance) {
@@ -71,7 +70,6 @@ export default {
       }
     },
     resize (e) {
-      console.log('resize cont')
       this.setPosition()
     },
     clearElResize () {
@@ -113,6 +111,12 @@ export default {
     },
     handleSkip () {
       this.hide()
+    },
+    handlePrev () {
+      this.introInstance.prevStep()
+    },
+    handleNext () {
+      this.introInstance.nextStep()
     }
   }
 }
